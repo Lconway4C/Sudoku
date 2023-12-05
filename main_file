@@ -1,12 +1,3 @@
-'''
-This program generates a random 9x9 sudoku board in the form of an array,
-removes a certain amount of spaces depending on player difficulty mode, and
-converts that to a playable sudoku board through the GUI. 
-'''
-
-'''
-import relevant functions
-'''
 import random
 import numpy as np
 import pygame
@@ -37,11 +28,11 @@ class SudokuBoard:
         [0,0,0, 0,0,0, 1,2,7]
 
         **Parameters**
-    
+
             None
-    
+
         **Returns**
-    
+
             board_array: *array*
                 A 9x9 array containing zeros and randomly generated 3x3 blocks.
         '''
@@ -49,15 +40,15 @@ class SudokuBoard:
         array_list = []
         for i in range(9):
             array_list.append([[0 for col in range(3)] for row in range(3)])
-        
+
         # make 3 randomly arranged lists of 9
-        nums_1 = list(range(1,10))
+        nums_1 = list(range(1, 10))
         random.shuffle(nums_1)
-        nums_2 = list(range(1,10))
+        nums_2 = list(range(1, 10))
         random.shuffle(nums_2)
-        nums_3 = list(range(1,10))
+        nums_3 = list(range(1, 10))
         random.shuffle(nums_3)
-        
+
         # replace the top left 3x3 block with the first random list
         for i in nums_1:
             # the first 3 values in the first row are replaced with i
@@ -71,7 +62,7 @@ class SudokuBoard:
             # the first 3 values in the third row are replaced with i
             if 5 < nums_1.index(i) <= 8:
                 array_list[2][0][nums_1.index(i)-6] = i
-        
+
         # replace the center 3x3 block with the second random list
         for i in nums_2:
             # the 4th, 5th, and 6th values in the 4th row are replaced with i
@@ -85,7 +76,7 @@ class SudokuBoard:
             # the 4th, 5th, and 6th values in the 6th row are replaced with i
             if 5 < nums_2.index(i) <= 8:
                 array_list[5][1][nums_2.index(i)-6] = i
-        
+
         # replace the bottom right 3x3 block with the third random list
         for i in nums_3:
             # the 7th, 8th, and 9th values in the 7th row are replaced with i
@@ -99,19 +90,18 @@ class SudokuBoard:
             # the 7th, 8th, and 9th values in the 9th row are replaced with i
             if 5 < nums_3.index(i) <= 8:
                 array_list[8][2][nums_3.index(i)-6] = i
-        
+
         # convert the above array list into one long list
         full_list = []
-        for i in range(0,9):
+        for i in range(0, 9):
             for triplet in array_list[i]:
                 for value in triplet:
                     full_list.append(value)
-        
+
         # convert the long list into a 9x9 array
-        board_array = np.array(full_list).reshape((9,9))
+        board_array = np.array(full_list).reshape((9, 9))
         return board_array
-    
-    
+
     def solve(board_array):
         '''
         This function uses backtracking to solve the board_array. For a number
@@ -120,22 +110,23 @@ class SudokuBoard:
         through the available spaces, attempts to place a number between 1 and
         9, and if it can't, resets the value to zero and pops the position
         stack.
-        
+
         **Parameters**
-    
+
             board_array: *array*
                 A 9x9 array containing zeros and randomly generated 3x3 blocks.
-    
+
         **Returns**
-    
+
             solved_board: *array*
                 A 9x9 array containing the solved sudoku board.
         '''
         solved_board = board_array
         # initializes the position stack with the first available space
         positions = [Test.next_pos(solved_board)]
-    
-        # loops while the last value in the position stack is in bounds and valid
+
+        # loops while the last value in the position stack
+        # is in bounds and valid
         while positions[-1]:
             get_pos = positions[-1]
             # initializes test variables
@@ -151,15 +142,19 @@ class SudokuBoard:
             # loops while the test number is within range
             while test_num <= 9:
 
-                # if the test number is not repeated in the row, column, or 
+                # if the test number is not repeated in the row, column, or
                 # block, it is valid to place and the loop exits
-                if Test.row_test(solved_board, test_row, test_num) and Test.column_test(solved_board, test_column, test_num) and Test.block_test(solved_board, test_row, test_column, test_num):
+                if Test.row_test(
+                    solved_board, test_row, test_num) and Test.column_test(
+                     solved_board, test_column, test_num) and Test.block_test(
+                      solved_board, test_row, test_column, test_num):
+
                     solved_board[test_row][test_column] = test_num
                     positions.append(Test.next_pos(solved_board))
                     break
 
-                # if the test number is not valid, the test number increases and
-                # the loop continues
+                # if the test number is not valid, the test number increases
+                # and the loop continues
                 else:
                     test_num += 1
 
@@ -168,7 +163,7 @@ class SudokuBoard:
                 # the number is reset to zero and the position backtracks
                 solved_board[test_row][test_column] = 0
                 positions.pop()
-    
+
         return solved_board
 
 
@@ -181,7 +176,7 @@ class Test:
         This function tests if a number is present in a row. This will return
         True if the number is not present in the row (passes the test) and
         False if the number is present (fails the test).
-        
+
         **Parameters**
 
             solved_board: *array*
@@ -192,60 +187,60 @@ class Test:
 
             num: *int*
                 The number to check in the row
-    
+
         **Returns**
-    
+
             True or False: *bool*
                 Returns True if the number passes the row test
         '''
         # initialize a condition list
         condition = []
-    
+
         # iterate through a row to check if a number is present
         for i in range(9):
             if solved_board[row][i] == num:
                 condition.append('x')
             else:
                 condition.append('o')
-    
+
         # if the number is in the row, return False
         if 'x' in condition:
             return False
         else:
             return True
-    
+
     def column_test(solved_board, column, num):
         '''
         This function tests if a number is present in a column. This will
         return True if the number is not present in the column
         (passes the test) and False if the number is present (fails the test).
-        
+
         **Parameters**
 
             solved_board: *array*
                 A 9x9 array containing the sudoku board
-    
+
             column: *int*
                 The column to check
 
             num: *int*
                 The number to check in the column
-    
+
         **Returns**
-    
+
             True or False: *bool*
                 Returns True if the number passes the column test
         '''
         # initialize a condition list
         condition = []
-        
+
         # iterate through a column to check if a number is present
         for i in range(9):
             if solved_board[i][column] == num:
                 condition.append('x')
             else:
                 condition.append('o')
-    
+
         # if the number is in the column, return False
         if 'x' in condition:
             return False
@@ -255,12 +250,12 @@ class Test:
     def block_test(solved_board, row, column, num):
         '''
         This function tests if a number is present in a 3x3 block. This will
-        return True if the number is not present in the block (passes the test)
+        return True if the number is not present in the block(passes the test)
         and False if the number is present (fails the test).
         To check a block, you need to find which block the position is in
         and loop through the 3x3 position. Therefore, you need to find the
         start positions for the row and column.
-        
+
         **Parameters**
 
             solved_board: *array*
@@ -274,9 +269,9 @@ class Test:
 
             num: *int*
                 The number to check in the block
-    
+
         **Returns**
-    
+
             True or False: *bool*
                 Returns True if the number passes the block test
         '''
@@ -287,7 +282,7 @@ class Test:
             row_start = 3
         if row == 6 or row == 7 or row == 8:
             row_start = 6
-    
+
         # find start positions for a given column value
         if column == 0 or column == 1 or column == 2:
             column_start = 0
@@ -295,10 +290,10 @@ class Test:
             column_start = 3
         if column == 6 or column == 7 or column == 8:
             column_start = 6
-    
+
         # initialize a condition list
         condition = []
-    
+
         # iterate through a 3x3 block to check if a number is present
         for i in range(3):
             for j in range(3):
@@ -306,25 +301,25 @@ class Test:
                     condition.append('x')
                 else:
                     condition.append('o')
-    
+
         # if a number is in the block, return False
         if 'x' in condition:
             return False
         else:
             return True
-    
+
     def next_pos(solved_board):
         '''
         This function finds the next available position. This leaves the
         original 3 3x3 blocks unchanged.
-        
+
         **Parameters**
 
             solved_board: *array*
                 A 9x9 array containing the sudoku board
-    
+
         **Returns**
-    
+
             row: *int*
                 The row of the position
 
@@ -346,107 +341,105 @@ class BoardDifficulty:
         '''
         This function creates an easy board by removing 40 random numbers
         from the board.
-        
+
         **Parameters**
 
             solved_board: *array*
                 A 9x9 array containing the sudoku board
-    
+
         **Returns**
-    
+
             easy_board: *array*
                 A 9x9 array containing an easy, playable sudoku board
         '''
         easy_board = solved_board
         # creates an empty position list
         pos_list = []
-    
+
         # loops while there are less than 40 positions
         while len(pos_list) < 40:
             # x-coordinate is assigned a random number from 0 to 8
             x_val = random.randint(0, 8)
             # y-coordinate is assigned a random number from 0 to 8
             y_val = random.randint(0, 8)
-    
+
             # if that random coordinate is not already in the position list,
             # this executes
             if (x_val, y_val) not in pos_list:
                 # the number at that position is replaced with zero
                 easy_board[x_val][y_val] = 0
                 pos_list.append((x_val, y_val))
-    
+
         return easy_board
-    
-    
+
     def medium_board(solved_board):
         '''
         This function creates a medium board by removing 50 random numbers
         from the board.
-        
+
         **Parameters**
 
             solved_board: *array*
                 A 9x9 array containing the sudoku board
-    
+
         **Returns**
-    
+
             medium_board: *array*
                 A 9x9 array containing a medium, playable sudoku board
         '''
         medium_board = solved_board
         # creates an empty position list
         pos_list = []
-    
+
         # loops while there are less than 50 positions
         while len(pos_list) < 50:
             # x-coordinate is assigned a random number from 0 to 8
             x_val = random.randint(0, 8)
             # y-coordinate is assigned a random number from 0 to 8
             y_val = random.randint(0, 8)
-    
+
             # if that random coordinate is not already in the position list,
             # this executes
             if (x_val, y_val) not in pos_list:
                 # the number at that position is replaced with zero
                 medium_board[x_val][y_val] = 0
                 pos_list.append((x_val, y_val))
-    
+
         return medium_board
-    
-    
+
     def hard_board(solved_board):
         '''
         This function creates a hard board by removing 60 random numbers
         from the board.
-        
+
         **Parameters**
 
             solved_board: *array*
                 A 9x9 array containing the sudoku board
-    
+
         **Returns**
-    
+
             hard_board: *array*
                 A 9x9 array containing a hard, playable sudoku board
         '''
         hard_board = solved_board
         # creates an empty position list
         pos_list = []
-    
+
         # loops while there are less than 60 positions
         while len(pos_list) < 60:
             # x-coordinate is assigned a random number from 0 to 8
             x_val = random.randint(0, 8)
             # y-coordinate is assigned a random number from 0 to 8
             y_val = random.randint(0, 8)
-    
+
             # if that random coordinate is not already in the position list,
             # this executes
             if (x_val, y_val) not in pos_list:
                 # the number at that position is replaced with zero
                 hard_board[x_val][y_val] = 0
                 pos_list.append((x_val, y_val))
-    
+
         return hard_board
 
 
@@ -463,11 +456,11 @@ class Game:
 
         '''
         # colors
-        self.white = (255,255,255)
+        self.white = (255, 255, 255)
         self.black = (0, 0, 0)
-        self.green = (0,255,0)
-        self.red = (255,0,0)
-        
+        self.green = (0, 255, 0)
+        self.red = (255, 0, 0)
+
         # initiliaze game
         pygame.init()
         self.window = pygame.display.set_mode((560, 560))
@@ -486,23 +479,24 @@ class Game:
         self.start_time = None
         self.clock = pygame.time.Clock()
         self.elapsed_time = 0
-        self.elapsed_time_text = self.font.render(f'Time: {self.elapsed_time}s', True, self.black)
+        self.elapsed_time_text = self.font.render(
+            f'Time: {self.elapsed_time}s', True, self.black)
         self.window.blit(self.elapsed_time_text, (360, 5))
 
     def play(self):
         '''
-        This launches the GUI. 
+        This launches the GUI.
 
         First, the grid is drawn with thicker lines around 3x3 blocks.
 
-        Then, non-zero values from the playable board are drawn in. 
+        Then, non-zero values from the playable board are drawn in.
 
-        Then, it defines what different clicks do. A left click over an empty 
-        grid element will call the insert function; a left click on the exit 
+        Then, it defines what different clicks do. A left click over an empty
+        grid element will call the insert function; a left click on the exit
         button will close the program.
-        
+
         Then, once the board is solved, a results screen is displayed.
-        
+
 
         **Returns**
 
@@ -510,16 +504,20 @@ class Game:
 
         '''
         # loops through 9
-        for i in range(0,10):
+        for i in range(0, 10):
             # if a multiple of 3, draw thick lines
             if (i % 3 == 0):
-                pygame.draw.line(self.window, self.black, (100 + 40 * i, 100), (100 + 40 * i, 460), 4)
-                pygame.draw.line(self.window, self.black, (100, 100 + 40 * i), (460, 100 + 40 * i), 4)
+                pygame.draw.line(self.window, self.black, (
+                    100 + 40 * i, 100), (100 + 40 * i, 460), 4)
+                pygame.draw.line(self.window, self.black, (
+                    100, 100 + 40 * i), (460, 100 + 40 * i), 4)
 
             # if not a multiple of 3, draw thin lines
             else:
-                pygame.draw.line(self.window, self.black, (100 + 40 * i, 100), (100 + 40 * i, 460), 2)
-                pygame.draw.line(self.window, self.black, (100, 100 + 40 * i), (460, 100 + 40 * i), 2)
+                pygame.draw.line(self.window, self.black, (
+                    100 + 40 * i, 100), (100 + 40 * i, 460), 2)
+                pygame.draw.line(self.window, self.black,
+                                 (100, 100 + 40 * i), (460, 100 + 40 * i), 2)
 
         # loops through the board positions
         for i in range(0, 9):
@@ -527,10 +525,12 @@ class Game:
                 # finds all nonzero entries on the board
                 if playable_board[i][j] != 0:
                     # displays the numbers
-                    value = self.font.render(str(playable_board[i][j]), True, self.black)
+                    value = self.font.render(
+                        str(playable_board[i][j]), True, self.black)
                     self.window.blit(value, (68 + (j+1)*40, 58 + (i+1)*40))
 
-        # displays an initial screen with the grid drawn and given values drawn in
+        # displays an initial screen with the grid drawn and given values
+        # drawn in
         pygame.display.update()
 
         # while the program is running
@@ -547,7 +547,6 @@ class Game:
                     # calls the insert function at that position
                     self.insert(((pos[0] - 68) // 40, (pos[1] - 58) // 40))
 
-                    
                     if self.start_time is None:
                         # returns the number of milliseconds at start_time
                         self.start_time = pygame.time.get_ticks()
@@ -561,15 +560,16 @@ class Game:
             if self.start_time is not None:
                 # subtracts the start_time from the total time and converts
                 # from miliseconds to seconds
-                self.elapsed_time = (pygame.time.get_ticks() - self.start_time) // 1000
-
+                self.elapsed_time = (
+                    pygame.time.get_ticks() - self.start_time) // 1000
 
             # draws a white rectangle over the timer
             pygame.draw.rect(self.window, self.white, (360, 5, 160, 94))
-            
-            # updates the elapsed time 
-            elapsed_time_text = self.font.render(f'Time: {self.elapsed_time}s', True, self.black)
-            
+
+            # updates the elapsed time
+            elapsed_time_text = self.font.render(
+                f'Time: {self.elapsed_time}s', True, self.black)
+
             # displays the elapsed time over the white rectangle
             self.window.blit(elapsed_time_text, (360, 5))
             pygame.display.update()
@@ -578,33 +578,33 @@ class Game:
             if playable_board == full_board:
                 # disables the timer
                 self.start_time = None
-                
+
                 # draws a large white rectangle over the board to erase it
                 pygame.draw.rect(self.window, self.white, (0, 90, 560, 470))
                 pygame.draw.rect(self.window, self.white, (0, 0, 150, 90))
 
                 # displays the results
-                results = self.font.render(f'Errors: {self.error_count}, Time: {self.elapsed_time}s', True, self.black)
+                results = self.font.render(
+                    f'Errors: {self.error_count}, Time: {self.elapsed_time}s',
+                    True, self.black)
                 self.window.blit(results, (150, 210))
                 pygame.display.update()
-
-
 
     def insert(self, position):
         '''
         This function inserts a number.
-        
+
         If the game is quit, the loop exits.
-        
+
         If the player attempts to edit the original board, the loop exits.
-        
+
         If the player backspaces, a blank reactangle is drawn over the space
         and the playable board is updated.
-        
+
         If the player guesses the correct number, a blank reactangle is drawn
         over the space, the number is displayed over it in green, and the
         playable board is updated.
-        
+
         If the player guesses the incorrect number, a blank reactangle is drawn
         over the space, the number is displayed over it in red, and the
         playable board is updated. The error counter is also updated. It will
@@ -627,7 +627,7 @@ class Game:
         # while the program is running
         while True:
             for event in pygame.event.get():
-                
+
                 # if the program is closed, the loop exits
                 if event.type == pygame.QUIT:
                     return
@@ -635,7 +635,8 @@ class Game:
                 # if a key is presssed
                 if event.type == pygame.KEYDOWN:
 
-                    # if the player attempts to edit the original board, the loop exits
+                    # if the player attempts to edit the original board,
+                    # the loop exits
                     if chosen_board[i-1][j-1] != 0:
                         return
 
@@ -644,8 +645,10 @@ class Game:
                         # the value at that position is returned to zero
                         playable_board[i-1][j-1] = 0
 
-                        # a blank rectangle is drawn over the position that was backspaced
-                        pygame.draw.rect(self.window, self.white, (j * 40 + 62, i * 40 + 64, 36, 36))
+                        # a blank rectangle is drawn over the position that
+                        # was backspaced
+                        pygame.draw.rect(self.window, self.white, (
+                            j * 40 + 62, i * 40 + 64, 36, 36))
 
                         # the display is updated
                         pygame.display.update()
@@ -655,12 +658,14 @@ class Game:
 
                         # if the input value is equal to the solution
                         if event.key - 48 == full_board[i-1][j-1]:
-        
+
                             # a blank rectangle is drawn over the position
-                            pygame.draw.rect(self.window, self.white, (j * 40 + 62, i * 40 + 64, 36, 36))
+                            pygame.draw.rect(self.window, self.white, (
+                                j * 40 + 62, i * 40 + 64, 36, 36))
 
                             # the number is drawn in green
-                            value = self.font.render(str(event.key - 48), True, self.green)
+                            value = self.font.render(str(event.key - 48),
+                                                     True, self.green)
                             self.window.blit(value, (j * 40 + 72, 60 + i * 40))
 
                             # updates the playable board with the correct value
@@ -673,27 +678,31 @@ class Game:
                         else:
 
                             # a blank rectangle is drawn over the position
-                            pygame.draw.rect(self.window, self.white, (j * 40 + 62, i * 40 + 64, 36, 36))
+                            pygame.draw.rect(self.window, self.white, (
+                                j * 40 + 62, i * 40 + 64, 36, 36))
 
                             # the number is drawn in red
-                            value = self.font.render(str(event.key - 48), True, self.red)
+                            value = self.font.render(str(event.key - 48),
+                                                     True, self.red)
                             self.window.blit(value, (j * 40 + 68, 58 + i * 40))
 
-                            # updates the playable board with the incorrect value
+                            # updates the playable board with the incorrect
+                            # value
                             playable_board[i-1][j-1] = event.key - 48
 
                             # updates the display
                             pygame.display.update()
 
-
                             # the error counter is updated
                             self.error_count = self.error_count + 1
 
                             # a blank rectangle is drawn in the top left corner
-                            pygame.draw.rect(self.window, self.white, (1, 1, 150, 90))
+                            pygame.draw.rect(self.window, self.white,
+                                             (1, 1, 150, 90))
 
                             # the error count is drawn in red
-                            errors = self.font.render(f'Errors: {self.error_count}', True, self.red)
+                            errors = self.font.render(
+                                f'Errors: {self.error_count}', True, self.red)
                             self.window.blit(errors, (5, 5))
 
                             # the display is updated
@@ -702,12 +711,12 @@ class Game:
                     return
 
 
-
 if __name__ == "__main__":
     board_array = SudokuBoard.board_array()
     full_board = SudokuBoard.solve(board_array).tolist()
     chosen_board = BoardDifficulty.easy_board(board_array)
-    playable_board = [[chosen_board[x][y] for y in range(len(chosen_board[0]))] for x in range(len(chosen_board))]
-    
+    playable_board = [[chosen_board[x][y] for y in range(
+        len(chosen_board[0]))] for x in range(len(chosen_board))]
+
     Game = Game()
     Game.play()
