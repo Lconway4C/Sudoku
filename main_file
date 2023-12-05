@@ -636,7 +636,7 @@ class Game:
                 if event.type == pygame.KEYDOWN:
 
                     # if the player attempts to edit the original board, the loop exits
-                    if playable_board_original[i-1][j-1] != 0:
+                    if chosen_board[i-1][j-1] != 0:
                         return
 
                     # if the player backspaces
@@ -707,9 +707,7 @@ if __name__ == "__main__":
     board_array = SudokuBoard.board_array()
     full_board = SudokuBoard.solve(board_array).tolist()
     chosen_board = BoardDifficulty.easy_board(board_array)
-
     playable_board = [[chosen_board[x][y] for y in range(len(chosen_board[0]))] for x in range(len(chosen_board))]
-    playable_board_original = [[chosen_board[x][y] for y in range(len(chosen_board[0]))] for x in range(len(chosen_board))]
     
     Game = Game()
     Game.play()
