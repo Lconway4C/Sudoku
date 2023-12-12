@@ -32,3 +32,4 @@ This class creates a GUI for a user to play the sudoku game in.
 
 # Citation
 PiyushG14 (2021). Pygame-Sudoku. https://github.com/PiyushG14/Pygame-sudoku.git
+- Used as inspiration for setting up 9x9 grid and taking user input
