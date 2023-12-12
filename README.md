@@ -29,3 +29,6 @@ This class creates a GUI for a user to play the sudoku game in.
 10) If the answer is correct, it will appear in green; if it is wrong, it will appear in red
 11) If you need to erase an answer, click the spot and hit the backspace key
 12) Once you have solved the board, a page will appear displaying the number of errors you made and the time it took to solve
+
+# Citation
+PiyushG14 (2021). Pygame-Sudoku. https://github.com/PiyushG14/Pygame-sudoku.git
