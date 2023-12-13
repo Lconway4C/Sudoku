@@ -445,7 +445,10 @@ class BoardDifficulty:
 
 class Game:
     '''
-    This class creates a GUI to play Sudoku on
+    This class creates a GUI to play Sudoku on.
+    This class takes inspiration from PiyushG14 (2021).
+    Pygame-Sudoku. https://github.com/PiyushG14/Pygame-sudoku.git
+    for how to draw the grid and take user input
     '''
     def __init__(self):
         '''
