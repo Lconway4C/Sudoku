@@ -556,7 +556,7 @@ class Game:
                     pygame.quit()
                     sys.exit()
 
-            # if the clock is not running
+            # if the clock is running
             if self.start_time is not None:
                 # subtracts the start_time from the total time and converts
                 # from milliseconds to seconds
